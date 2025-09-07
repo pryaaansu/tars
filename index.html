@@ -326,6 +326,10 @@
             caret-color: transparent;
             letter-spacing: 1px;
             line-height: 1.5;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0;
         }
 
         .cursor {
@@ -493,6 +497,216 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
         }
+
+        @media screen and (max-width: 1200px) {
+            .crt-tv {
+                width: 90vw;
+                height: 70vh;
+                padding: 40px;
+            }
+            
+            .monitor-container {
+                transform: translateY(-20px) rotateY(0deg) rotateX(0deg);
+            }
+            
+            .desk {
+                height: 100px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                overflow: auto;
+                height: auto;
+                min-height: 100vh;
+                padding: 10px;
+            }
+            
+            .monitor-container {
+                transform: none;
+                width: 100%;
+                max-width: 100vw;
+            }
+            
+            .crt-tv {
+                width: 100%;
+                height: auto;
+                min-height: 80vh;
+                padding: 20px;
+                border-radius: 20px;
+            }
+            
+            .desk {
+                display: none;
+            }
+            
+            .speaker-grille {
+                display: none;
+            }
+            
+            .control-panel {
+                bottom: 15px;
+                right: 20px;
+                gap: 10px;
+            }
+            
+            .knob {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .power-led {
+                bottom: 15px;
+                left: 20px;
+                width: 6px;
+                height: 6px;
+            }
+            
+            .crt-tv::before {
+                font-size: 14px;
+                letter-spacing: 4px;
+                bottom: 15px;
+            }
+            
+            .terminal {
+                padding: 20px;
+                font-size: 16px;
+            }
+            
+            .command-line {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .prompt {
+                margin-bottom: 5px;
+            }
+            
+            .input-container {
+                width: 100%;
+            }
+            
+            #command-input {
+                font-size: 16px;
+                width: 100%;
+            }
+            
+            .cursor {
+                width: 8px;
+                height: 18px;
+            }
+            
+            .output {
+                font-size: 14px;
+                line-height: 1.4;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            
+            .ascii-art {
+                font-size: 10px;
+                line-height: 1.1;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .crt-tv {
+                padding: 15px;
+                border-radius: 15px;
+            }
+            
+            .terminal {
+                padding: 15px;
+                font-size: 14px;
+            }
+            
+            #command-input {
+                font-size: 14px;
+            }
+            
+            .output {
+                font-size: 12px;
+            }
+            
+            .cursor {
+                width: 6px;
+                height: 16px;
+            }
+            
+            .control-panel {
+                bottom: 10px;
+                right: 15px;
+                gap: 8px;
+            }
+            
+            .knob {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .power-led {
+                bottom: 10px;
+                left: 15px;
+                width: 5px;
+                height: 5px;
+            }
+            
+            .crt-tv::before {
+                font-size: 12px;
+                letter-spacing: 2px;
+                bottom: 10px;
+            }
+        }
+
+        @media screen and (max-width: 360px) {
+            .terminal {
+                padding: 10px;
+                font-size: 12px;
+            }
+            
+            #command-input {
+                font-size: 12px;
+            }
+            
+            .output {
+                font-size: 11px;
+            }
+            
+            .cursor {
+                width: 5px;
+                height: 14px;
+            }
+        }
+
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            body {
+                overflow: auto;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            .monitor-container {
+                transform: none;
+                width: 100%;
+            }
+            
+            .crt-tv {
+                width: 100%;
+                height: auto;
+                min-height: 90vh;
+                padding: 15px;
+            }
+            
+            .desk {
+                display: none;
+            }
+            
+            .terminal {
+                padding: 15px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -539,7 +753,8 @@
         
         function updateCursorPosition() {
             const text = commandInput.value;
-            const textWidth = getTextWidth(text, '22px VT323');
+            const fontSize = window.innerWidth <= 480 ? '14px' : window.innerWidth <= 768 ? '16px' : '22px';
+            const textWidth = getTextWidth(text, fontSize + ' VT323');
             cursor.style.left = textWidth + 'px';
         }
         
@@ -550,32 +765,41 @@
             return context.measureText(text).width;
         }
         
+        function handleResize() {
+            updateCursorPosition();
+        }
+        
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(handleResize, 100);
+        });
+        
         const commands = {
             help: {
                 output: `
-┌─────────────────────────────────────────────┐
-│            ◆ AVAILABLE COMMANDS ◆           │
-├─────────────────────────────────────────────┤
-│                                             │
-│  help      - Display this help menu         │
-│  about     - About Priyanshu Pramanik       │
-│  projects  - View my projects               │
-│  skills    - Technical skills & tools       │
-│  education - Educational background         │
-│  certs     - Certifications & achievements  │
-│  contact   - Contact information            │
-│  download  - Download CV (PDF)              │
-│  clear     - Clear the terminal             │
-│                                             │
-└─────────────────────────────────────────────┘
+═══════════════════════════════════════════════
+            ◆ AVAILABLE COMMANDS ◆
+═══════════════════════════════════════════════
+
+  help      - Display this help menu
+  about     - About Priyanshu Pramanik
+  projects  - View my projects
+  skills    - Technical skills & tools
+  education - Educational background
+  certs     - Certifications & achievements
+  contact   - Contact information
+  download  - Download CV (PDF)
+  clear     - Clear the terminal
+
+═══════════════════════════════════════════════
 
 Type any command to continue...`
             },
             about: {
                 output: `
-┌────────────────────────────────────────────┐
-│               ◆ ABOUT ME ◆                 │
-└────────────────────────────────────────────┘
+═══════════════════════════════════════════════
+               ◆ ABOUT ME ◆
+═══════════════════════════════════════════════
 
 Senior B.E. student specializing in offensive and 
 defensive cybersecurity with proven expertise in 
@@ -594,22 +818,22 @@ automated vulnerability scanner development.
   leverage hands-on experience while contributing to 
   real-world offensive and defensive security projects.
 
-════════════════════════════════════════════════`
+═══════════════════════════════════════════════`
             },
             projects: {
                 output: `
-┌────────────────────────────────────────────┐
-│              ◆ PROJECTS ◆                  │
-└────────────────────────────────────────────┘
+═══════════════════════════════════════════════
+              ◆ PROJECTS ◆
+═══════════════════════════════════════════════
 
-▓▓▓ [1] TARSPECTRA ▓▓▓
+[1] TARSPECTRA
     An MVP for automated web vulnerability assessment.
     Performs deep crawling, generates sitemaps, detects
     parameters, and scans for XSS, LFI, RFI, and IDOR.
     
     ► https://github.com/pryaaansu/tarspectra
 
-▓▓▓ [2] XYLO ▓▓▓
+[2] XYLO
     A hackathon project featuring an automated web
     crawler with dynamic sitemap generation and
     integrated scanners for XSS, IDOR, LFI, and RFI
@@ -617,7 +841,7 @@ automated vulnerability scanner development.
     
     ► https://github.com/pryaaansu/xylo
 
-▓▓▓ [3] MINI PROJECTS ▓▓▓
+[3] MINI PROJECTS
     A collection of educational CLI security tools
     built in Python, including:
     • Backdoor
@@ -625,93 +849,93 @@ automated vulnerability scanner development.
     • Directories Scanner
     • Bruteforce tool
 
-════════════════════════════════════════════════`
+═══════════════════════════════════════════════`
             },
             skills: {
                 output: `
-┌────────────────────────────────────────────┐
-│              ◆ SKILLS ◆                    │
-└────────────────────────────────────────────┘
+═══════════════════════════════════════════════
+              ◆ SKILLS ◆
+═══════════════════════════════════════════════
 
-▓▓▓ TOOLS ▓▓▓
+TOOLS
   ► Burp Suite      ► Kali Linux
   ► Tenable Nessus  ► Wireshark
   ► Ettercap        ► Metasploit
   ► Splunk          ► Git
 
-▓▓▓ EXPERTISE ▓▓▓
+EXPERTISE
   ► Web Application Security
   ► Penetration Testing
   ► Vulnerability Research
   ► Network Security
 
-▓▓▓ LANGUAGES ▓▓▓
+LANGUAGES
   ► Python  ► C      ► C++
   ► Java    ► MySQL  ► HTML5
   ► CSS
 
-════════════════════════════════════════════════`
+═══════════════════════════════════════════════`
             },
             education: {
                 output: `
-┌────────────────────────────────────────────┐
-│            ◆ EDUCATION ◆                   │
-└────────────────────────────────────────────┘
+═══════════════════════════════════════════════
+            ◆ EDUCATION ◆
+═══════════════════════════════════════════════
 
-▓▓▓ DEGREE ▓▓▓
+DEGREE
   Bachelor of Engineering in Computer Science
   and Engineering - IOT & Cyber Security
   including Blockchain Technology
 
-▓▓▓ INSTITUTION ▓▓▓
+INSTITUTION
   Dayananda Sagar Academy of Technology
   and Management, Bengaluru, IN
 
-▓▓▓ GRADUATION ▓▓▓ 
+GRADUATION 
   2027
 
-════════════════════════════════════════════════`
+═══════════════════════════════════════════════`
             },
             certs: {
                 output: `
-┌────────────────────────────────────────────┐
-│         ◆ CERTIFICATIONS ◆                 │
-└────────────────────────────────────────────┘
+═══════════════════════════════════════════════
+         ◆ CERTIFICATIONS ◆
+═══════════════════════════════════════════════
 
-▓▓▓ WEB SECURITY ACADEMY (PortSwigger) ▓▓▓
+WEB SECURITY ACADEMY (PortSwigger)
   Completed 100+ labs covering XSS, IDOR,
   SQL Injection, CSRF, Path Traversal, and more.
 
-▓▓▓ HACK THE BOX ▓▓▓
+HACK THE BOX
   Solved multiple CTF-style challenges and
   machines to strengthen penetration testing skills.
 
-▓▓▓ picoCTF ▓▓▓
+picoCTF
   Solved diverse challenges focusing on
   cryptography, reverse engineering, and
   web exploitation.
 
-▓▓▓ CTFlearn ▓▓▓
+CTFlearn
   Practiced challenges to enhance skills in
   reconnaissance, exploitation, and
   privilege escalation.
 
-════════════════════════════════════════════════`
+═══════════════════════════════════════════════`
             },
             contact: {
                 output: `
-┌────────────────────────────────────────────┐
-│            ◆ CONTACT ◆                     │
-└────────────────────────────────────────────┘
+═══════════════════════════════════════════════
+            ◆ CONTACT ◆
+═══════════════════════════════════════════════
 
-▓▓▓ REACH OUT ▓▓▓
+REACH OUT
 
   EMAIL:    prynsu99@gmail.com
   LINKEDIN: https://linkedin.com/in/pryaaansu
   GITHUB:   https://github.com/pryaaansu
   WEBSITE:  https://regonna.in
 
-════════════════════════════════════════════════`
+═══════════════════════════════════════════════`
             },
             clear: {
                 action: () => {
@@ -721,11 +945,11 @@ automated vulnerability scanner development.
             },
             download: {
                 output: `
-┌────────────────────────────────────────────┐
-│            ◆ DOWNLOADING CV ◆              │
-└────────────────────────────────────────────┘
+═══════════════════════════════════════════════
+            ◆ DOWNLOADING CV ◆
+═══════════════════════════════════════════════
 
-▓▓▓ INITIATING DOWNLOAD ▓▓▓
+INITIATING DOWNLOAD
   ► Preparing CV for download...
   ► File: Priyanshu_Pramanik_CV.pdf
   ► Size: ~2.5 MB
@@ -735,7 +959,7 @@ automated vulnerability scanner development.
 
 ✅ Download completed successfully!
 
-════════════════════════════════════════════════`,
+═══════════════════════════════════════════════`,
                 action: () => {
                     const link = document.createElement('a');
                     link.href = 'https://drive.google.com/uc?export=download&id=1BWvFK_lCfnTPe3o-mQvA8DlHLsib6nXO';
@@ -747,11 +971,11 @@ automated vulnerability scanner development.
             },
             job: {
                 output: `
-┌────────────────────────────────────────────┐
-│       ◆ DAMN YOU INSPECT MY CODE ◆         │
-└────────────────────────────────────────────┘
+═══════════════════════════════════════════════
+       ◆ DAMN YOU INSPECT MY CODE ◆
+═══════════════════════════════════════════════
 
-▓▓▓ WHY HIRE ME? ▓▓▓
+WHY HIRE ME?
 
   ✅ I can find vulnerabilities in your code
   ✅ I can find vulnerabilities in your coffee machine
@@ -759,28 +983,28 @@ automated vulnerability scanner development.
   ✅ I promise not to hack your company (unless asked)
   ✅ I bring my own linux and reciding hair-line
 
-▓▓▓ CURRENT SITUATION ▓▓▓
+CURRENT SITUATION
 
   My bank account: Rs. 23.71
   My skills: Priceless
   My desperation: Immeasurable
   My willingness to work: 70hr/week (narayana murthy would love me)
 
-▓▓▓ SPECIAL OFFERS ▓▓▓
+SPECIAL OFFERS
 
   🎯 First month FREE (just pay for my bills, i cant afford in this economy)
   🎯 Will work for chicken biriyani and validation
   🎯 Can start immediately (just hire me atp)
   🎯 References available upon request (my mom, dad says I'm great)
 
-▓▓▓ CONTACT FOR HIRING ▓▓▓
+CONTACT FOR HIRING
 
   Email: prynsu99@gmail.com
   Subject: "We're hiring you (finally)"
   Urgency: CRITICAL
   Bribe: biriyani accepted
 
-════════════════════════════════════════════════
+═══════════════════════════════════════════════
 
 💀 P.S. If you don't hire me, I'll start 
     pentesting your toaster. You've been warned.`
@@ -805,9 +1029,9 @@ automated vulnerability scanner development.
           ▓▓▓                            
         ▓▓▓                                                
             
-┌────────────────────────────────────────────┐
-│        WELCOME TO MY PORTFOLIO :D          │
-└────────────────────────────────────────────┘
+════════════════════════════════════════════════
+        WELCOME TO MY PORTFOLIO :D          
+════════════════════════════════════════════════
 
   PRIYANSHU PRAMANIK ^_^
   ► Security Researcher
@@ -849,10 +1073,10 @@ Type 'help' to see available commands.
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'output glitch';
                 errorDiv.innerHTML = `
-╔════════════════════════════════════════════╗
-║  ERROR: COMMAND NOT FOUND: ${cmd.toUpperCase().padEnd(15)} ║
-║  TYPE 'help' TO SEE AVAILABLE COMMANDS     ║
-╚════════════════════════════════════════════╝`;
+═══════════════════════════════════════════════
+  ERROR: COMMAND NOT FOUND: ${cmd.toUpperCase()}
+  TYPE 'help' TO SEE AVAILABLE COMMANDS
+═══════════════════════════════════════════════`;
                 output.appendChild(errorDiv);
             }
             
@@ -881,6 +1105,27 @@ Type 'help' to see available commands.
             showWelcomeMessage();
             commandInput.focus();
             updateCursorPosition();
+        });
+
+        commandInput.addEventListener('focus', () => {
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    window.scrollTo(0, 0);
+                    document.body.scrollTop = 0;
+                }, 300);
+            }
+        });
+
+        commandInput.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            commandInput.focus();
+        });
+
+        document.addEventListener('touchstart', (e) => {
+            if (e.target !== commandInput) {
+                commandInput.focus();
+                updateCursorPosition();
+            }
         });
 
         setInterval(() => {
