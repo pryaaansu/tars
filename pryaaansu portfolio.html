@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Priyanshu Pramanik</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background: #000;
+            height: 100vh;
+            overflow: hidden;
+            perspective: 1500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    #0a0a0a,
+                    #0a0a0a 2px,
+                    #0f0f0f 2px,
+                    #0f0f0f 4px
+                ),
+                radial-gradient(ellipse at center, #1a0f0f 0%, #000 100%);
+            opacity: 0.8;
+        }
+
+        .desk {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(180deg, #2a1810, #1a0f08);
+            transform: perspective(500px) rotateX(60deg);
+            transform-origin: bottom;
+            box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.9);
+        }
+
+        .desk::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 20px,
+                rgba(0, 0, 0, 0.3) 20px,
+                rgba(0, 0, 0, 0.3) 21px
+            );
+        }
+
+        .monitor-container {
+            transform-style: preserve-3d;
+            transform: translateY(-50px) rotateY(-2deg) rotateX(1deg);
+            z-index: 10;
+        }
+
+        .crt-tv {
+            width: 1100px;
+            height: 850px;
+            position: relative;
+            background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+            border-radius: 40px;
+            padding: 60px;
+            box-shadow: 
+                0 0 150px rgba(255, 183, 76, 0.1),
+                0 30px 100px rgba(0, 0, 0, 0.9),
+                inset 0 0 30px rgba(0, 0, 0, 0.7),
+                inset 0 5px 10px rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+        }
+
+        .crt-tv::before {
+            content: '@pryaaansu';
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #4a4a4a;
+            font-size: 20px;
+            letter-spacing: 8px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .speaker-grille {
+            position: absolute;
+            width: 100px;
+            height: 200px;
+            background: repeating-linear-gradient(
+                0deg,
+                #2a2a2a 0px,
+                #2a2a2a 3px,
+                #1a1a1a 3px,
+                #1a1a1a 6px
+            );
+            border-radius: 10px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .speaker-grille.left {
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .speaker-grille.right {
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .control-panel {
+            position: absolute;
+            bottom: 25px;
+            right: 80px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .knob {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #4a4a4a, #2a2a2a);
+            border-radius: 50%;
+            box-shadow: 
+                0 2px 5px rgba(0, 0, 0, 0.5),
+                inset 0 -1px 2px rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .knob::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 10px;
+            background: #1a1a1a;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 0 80px rgba(255, 183, 76, 0.1),
+                inset 0 0 20px rgba(0, 0, 0, 0.9),
+                inset 0 2px 5px rgba(255, 183, 76, 0.2);
+        }
+
+        .screen::before {
+            content: '';
+            position: absolute;
+            inset: -50px;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                transparent 60%,
+                rgba(0, 0, 0, 0.4) 100%
+            );
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .crt-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .scanlines {
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 183, 76, 0.03) 2px,
+                    rgba(255, 183, 76, 0.03) 4px
+                );
+            animation: scanlines 8s linear infinite;
+            z-index: 4;
+        }
+
+        @keyframes scanlines {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
+        }
+
+        .phosphor-glow {
+            background: radial-gradient(
+                ellipse at center,
+                rgba(255, 183, 76, 0.05) 0%,
+                transparent 70%
+            );
+            animation: glow 4s ease-in-out infinite alternate;
+            z-index: 3;
+        }
+
+        @keyframes glow {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .flicker {
+            background: rgba(255, 183, 76, 0.01);
+            animation: flicker 0.12s infinite;
+            z-index: 5;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.27861; }
+            5% { opacity: 0.34769; }
+            10% { opacity: 0.23604; }
+            20% { opacity: 0.18128; }
+            30% { opacity: 0.65583; }
+            40% { opacity: 0.26559; }
+            50% { opacity: 0.96019; }
+            60% { opacity: 0.20313; }
+            70% { opacity: 0.53455; }
+            80% { opacity: 0.71428; }
+            90% { opacity: 0.7003; }
+            100% { opacity: 0.24387; }
+        }
+
+        .rgb-shift {
+            animation: rgbShift 10s infinite;
+            z-index: 6;
+        }
+
+        @keyframes rgbShift {
+            0%, 100% { 
+                box-shadow: 
+                    inset 1px 0 0 rgba(255, 0, 0, 0.1),
+                    inset -1px 0 0 rgba(0, 255, 255, 0.1);
+            }
+            50% { 
+                box-shadow: 
+                    inset 1px 0 0 rgba(0, 255, 255, 0.1),
+                    inset -1px 0 0 rgba(255, 0, 0, 0.1);
+            }
+        }
+
+        .terminal {
+            padding: 40px;
+            height: 100%;
+            overflow-y: auto;
+            color: #ffb74c;
+            text-shadow: 
+                0 0 10px #ffb74c,
+                0 0 20px rgba(255, 183, 76, 0.5);
+            font-size: 22px;
+            line-height: 1.5;
+            z-index: 1;
+            position: relative;
+            letter-spacing: 1px;
+        }
+
+        .terminal::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .terminal::-webkit-scrollbar-track {
+            background: rgba(255, 183, 76, 0.05);
+            border-radius: 6px;
+        }
+
+        .terminal::-webkit-scrollbar-thumb {
+            background: rgba(255, 183, 76, 0.2);
+            border-radius: 6px;
+            box-shadow: inset 0 0 3px rgba(255, 183, 76, 0.3);
+        }
+
+        .command-line {
+            display: flex;
+            align-items: baseline;
+            margin-top: 15px;
+        }
+
+        .prompt {
+            color: #ffb74c;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .input-container {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: baseline;
+        }
+
+        #command-input {
+            background: transparent;
+            border: none;
+            color: #ffb74c;
+            font-family: 'VT323', monospace;
+            font-size: 22px;
+            outline: none;
+            flex: 1;
+            text-shadow: 
+                0 0 10px #ffb74c,
+                0 0 20px rgba(255, 183, 76, 0.5);
+            caret-color: transparent;
+            letter-spacing: 1px;
+            line-height: 1.5;
+        }
+
+        .cursor {
+            position: absolute;
+            width: 12px;
+            height: 24px;
+            background: #ffb74c;
+            box-shadow: 0 0 10px #ffb74c;
+            animation: blink 1s infinite step-start;
+            top: 3px;
+            left: 0;
+            pointer-events: none;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .output {
+            white-space: pre-wrap;
+            margin: 15px 0;
+            animation: lineIn 0.2s;
+        }
+
+        @keyframes lineIn {
+            from { 
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .ascii-art {
+            color: #ffb74c;
+            font-size: 14px;
+            line-height: 1.2;
+            margin: 20px 0;
+        }
+
+        .glitch {
+            animation: textGlitch 3s infinite;
+        }
+
+        @keyframes textGlitch {
+            0%, 100% { 
+                text-shadow: 
+                    0 0 10px #ffb74c,
+                    0 0 20px rgba(255, 183, 76, 0.5);
+                transform: translate(0);
+            }
+            5% {
+                text-shadow: 
+                    -2px 0 #ff0000, 
+                    2px 0 #00ffff,
+                    0 0 10px #ffb74c;
+                transform: translate(2px, -1px);
+            }
+            10% {
+                text-shadow: 
+                    2px 0 #ff00ff, 
+                    -2px 0 #00ff00,
+                    0 0 10px #ffb74c;
+                transform: translate(-1px, 2px);
+            }
+        }
+
+        a {
+            color: #ffd700;
+            text-decoration: underline;
+            text-shadow: 0 0 5px #ffd700;
+        }
+
+        a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px #fff;
+        }
+
+        .power-led {
+            position: absolute;
+            bottom: 25px;
+            left: 80px;
+            width: 8px;
+            height: 8px;
+            background: #ff3333;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 10px #ff3333,
+                0 0 20px #ff3333,
+                0 0 30px #ff3333;
+            animation: ledPulse 2s infinite;
+        }
+
+        @keyframes ledPulse {
+            0%, 100% { 
+                opacity: 1;
+                box-shadow: 
+                    0 0 10px #ff3333,
+                    0 0 20px #ff3333,
+                    0 0 30px #ff3333;
+            }
+            50% { 
+                opacity: 0.6;
+                box-shadow: 
+                    0 0 5px #ff3333,
+                    0 0 10px #ff3333,
+                    0 0 15px #ff3333;
+            }
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.02;
+            z-index: 1000;
+            background: 
+                repeating-radial-gradient(
+                    circle at 0 0, 
+                    #000 0, 
+                    #fff 1px, 
+                    #000 2px
+                );
+            animation: noiseAnim 0.2s infinite;
+        }
+
+        @keyframes noiseAnim {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-1%, -1%); }
+            20% { transform: translate(1%, 1%); }
+            30% { transform: translate(-1%, 1%); }
+            40% { transform: translate(1%, -1%); }
+            50% { transform: translate(-1%, -1%); }
+            60% { transform: translate(1%, 1%); }
+            70% { transform: translate(-1%, 1%); }
+            80% { transform: translate(1%, -1%); }
+            90% { transform: translate(-1%, -1%); }
+        }
+
+        .vhs-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0,
+                transparent 5px,
+                rgba(255, 255, 255, 0.01) 5px,
+                rgba(255, 255, 255, 0.01) 6px
+            );
+            animation: vhsTracking 5s linear infinite;
+            pointer-events: none;
+            z-index: 7;
+        }
+
+        @keyframes vhsTracking {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="desk"></div>
+    <div class="noise"></div>
+    
+    <div class="monitor-container">
+        <div class="crt-tv">
+            <div class="speaker-grille left"></div>
+            <div class="speaker-grille right"></div>
+            <div class="control-panel">
+                <div class="knob"></div>
+                <div class="knob"></div>
+                <div class="knob"></div>
+            </div>
+            <div class="power-led"></div>
+            
+            <div class="screen">
+                <div class="crt-effect scanlines"></div>
+                <div class="crt-effect phosphor-glow"></div>
+                <div class="crt-effect flicker"></div>
+                <div class="crt-effect rgb-shift"></div>
+                <div class="crt-effect vhs-lines"></div>
+                
+                <div class="terminal" id="terminal">
+                    <div id="output"></div>
+                    <div class="command-line">
+                        <span class="prompt">kali@pryaaansu:~$</span>
+                        <div class="input-container">
+                            <input type="text" id="command-input" autofocus>
+                            <span class="cursor" id="cursor"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const output = document.getElementById('output');
+        const commandInput = document.getElementById('command-input');
+        const cursor = document.getElementById('cursor');
+        
+        function updateCursorPosition() {
+            const text = commandInput.value;
+            const textWidth = getTextWidth(text, '22px VT323');
+            cursor.style.left = textWidth + 'px';
+        }
+        
+        function getTextWidth(text, font) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            context.font = font;
+            return context.measureText(text).width;
+        }
+        
+        const commands = {
+            help: {
+                output: `
+┌─────────────────────────────────────────────┐
+│            ◆ AVAILABLE COMMANDS ◆           │
+├─────────────────────────────────────────────┤
+│                                             │
+│  help      - Display this help menu         │
+│  about     - About Priyanshu Pramanik       │
+│  projects  - View my projects               │
+│  skills    - Technical skills & tools       │
+│  education - Educational background         │
+│  certs     - Certifications & achievements  │
+│  contact   - Contact information            │
+│  download  - Download CV (PDF)              │
+│  clear     - Clear the terminal             │
+│                                             │
+└─────────────────────────────────────────────┘
+
+Type any command to continue...`
+            },
+            about: {
+                output: `
+┌────────────────────────────────────────────┐
+│               ◆ ABOUT ME ◆                 │
+└────────────────────────────────────────────┘
+
+Senior B.E. student specializing in offensive and 
+defensive cybersecurity with proven expertise in 
+web application security, penetration testing, and 
+automated vulnerability scanner development. 
+
+⚡ Achieved top 10 rankings in all four hackathons 
+  and CTF challenges participated, showcasing strong 
+  problem-solving and innovative thinking. 
+
+⚡ Experienced in Capture The Flag (CTF) challenges, 
+  bug bounty methodologies, and advanced vulnerability 
+  research. 
+
+⚡ Actively seeking a cybersecurity internship to 
+  leverage hands-on experience while contributing to 
+  real-world offensive and defensive security projects.
+
+════════════════════════════════════════════════`
+            },
+            projects: {
+                output: `
+┌────────────────────────────────────────────┐
+│              ◆ PROJECTS ◆                  │
+└────────────────────────────────────────────┘
+
+▓▓▓ [1] TARSPECTRA ▓▓▓
+    An MVP for automated web vulnerability assessment.
+    Performs deep crawling, generates sitemaps, detects
+    parameters, and scans for XSS, LFI, RFI, and IDOR.
+    
+    ► https://github.com/pryaaansu/tarspectra
+
+▓▓▓ [2] XYLO ▓▓▓
+    A hackathon project featuring an automated web
+    crawler with dynamic sitemap generation and
+    integrated scanners for XSS, IDOR, LFI, and RFI
+    vulnerabilities.
+    
+    ► https://github.com/pryaaansu/xylo
+
+▓▓▓ [3] MINI PROJECTS ▓▓▓
+    A collection of educational CLI security tools
+    built in Python, including:
+    • Backdoor
+    • Port Scanner
+    • Directories Scanner
+    • Bruteforce tool
+
+════════════════════════════════════════════════`
+            },
+            skills: {
+                output: `
+┌────────────────────────────────────────────┐
+│              ◆ SKILLS ◆                    │
+└────────────────────────────────────────────┘
+
+▓▓▓ TOOLS ▓▓▓
+  ► Burp Suite      ► Kali Linux
+  ► Tenable Nessus  ► Wireshark
+  ► Ettercap        ► Metasploit
+  ► Splunk          ► Git
+
+▓▓▓ EXPERTISE ▓▓▓
+  ► Web Application Security
+  ► Penetration Testing
+  ► Vulnerability Research
+  ► Network Security
+
+▓▓▓ LANGUAGES ▓▓▓
+  ► Python  ► C      ► C++
+  ► Java    ► MySQL  ► HTML5
+  ► CSS
+
+════════════════════════════════════════════════`
+            },
+            education: {
+                output: `
+┌────────────────────────────────────────────┐
+│            ◆ EDUCATION ◆                   │
+└────────────────────────────────────────────┘
+
+▓▓▓ DEGREE ▓▓▓
+  Bachelor of Engineering in Computer Science
+  and Engineering - IOT & Cyber Security
+  including Blockchain Technology
+
+▓▓▓ INSTITUTION ▓▓▓
+  Dayananda Sagar Academy of Technology
+  and Management, Bengaluru, IN
+
+▓▓▓ GRADUATION ▓▓▓ 
+  2027
+
+════════════════════════════════════════════════`
+            },
+            certs: {
+                output: `
+┌────────────────────────────────────────────┐
+│         ◆ CERTIFICATIONS ◆                 │
+└────────────────────────────────────────────┘
+
+▓▓▓ WEB SECURITY ACADEMY (PortSwigger) ▓▓▓
+  Completed 100+ labs covering XSS, IDOR,
+  SQL Injection, CSRF, Path Traversal, and more.
+
+▓▓▓ HACK THE BOX ▓▓▓
+  Solved multiple CTF-style challenges and
+  machines to strengthen penetration testing skills.
+
+▓▓▓ picoCTF ▓▓▓
+  Solved diverse challenges focusing on
+  cryptography, reverse engineering, and
+  web exploitation.
+
+▓▓▓ CTFlearn ▓▓▓
+  Practiced challenges to enhance skills in
+  reconnaissance, exploitation, and
+  privilege escalation.
+
+════════════════════════════════════════════════`
+            },
+            contact: {
+                output: `
+┌────────────────────────────────────────────┐
+│            ◆ CONTACT ◆                     │
+└────────────────────────────────────────────┘
+
+▓▓▓ REACH OUT ▓▓▓
+
+  EMAIL:    prynsu99@gmail.com
+  LINKEDIN: https://linkedin.com/in/pryaaansu
+  GITHUB:   https://github.com/pryaaansu
+  WEBSITE:  https://regonna.in
+
+════════════════════════════════════════════════`
+            },
+            clear: {
+                action: () => {
+                    output.innerHTML = '';
+                    showWelcomeMessage();
+                }
+            },
+            download: {
+                output: `
+┌────────────────────────────────────────────┐
+│            ◆ DOWNLOADING CV ◆              │
+└────────────────────────────────────────────┘
+
+▓▓▓ INITIATING DOWNLOAD ▓▓▓
+  ► Preparing CV for download...
+  ► File: Priyanshu_Pramanik_CV.pdf
+  ► Size: ~2.5 MB
+  ► Format: PDF
+
+[████████████████████████████████████████] 100%
+
+✅ Download completed successfully!
+
+════════════════════════════════════════════════`,
+                action: () => {
+                    const link = document.createElement('a');
+                    link.href = 'https://drive.google.com/uc?export=download&id=1BWvFK_lCfnTPe3o-mQvA8DlHLsib6nXO';
+                    link.download = 'Priyanshu_Pramanik_CV.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            },
+            job: {
+                output: `
+┌────────────────────────────────────────────┐
+│       ◆ DAMN YOU INSPECT MY CODE ◆         │
+└────────────────────────────────────────────┘
+
+▓▓▓ WHY HIRE ME? ▓▓▓
+
+  ✅ I can find vulnerabilities in your code
+  ✅ I can find vulnerabilities in your coffee machine
+  ✅ I work for exposure (and obv money)
+  ✅ I promise not to hack your company (unless asked)
+  ✅ I bring my own linux and reciding hair-line
+
+▓▓▓ CURRENT SITUATION ▓▓▓
+
+  My bank account: Rs. 23.71
+  My skills: Priceless
+  My desperation: Immeasurable
+  My willingness to work: 70hr/week (narayana murthy would love me)
+
+▓▓▓ SPECIAL OFFERS ▓▓▓
+
+  🎯 First month FREE (just pay for my bills, i cant afford in this economy)
+  🎯 Will work for chicken biriyani and validation
+  🎯 Can start immediately (just hire me atp)
+  🎯 References available upon request (my mom, dad says I'm great)
+
+▓▓▓ CONTACT FOR HIRING ▓▓▓
+
+  Email: prynsu99@gmail.com
+  Subject: "We're hiring you (finally)"
+  Urgency: CRITICAL
+  Bribe: biriyani accepted
+
+════════════════════════════════════════════════
+
+💀 P.S. If you don't hire me, I'll start 
+    pentesting your toaster. You've been warned.`
+            }
+        };
+// Dear Employer: Hire me now, or my next payload will replace your favicon with my linkedin qr code.
+
+        function showWelcomeMessage() {
+            const welcomeMessage = `
+                ▓▓                       
+             ▓▓▓▓                        
+            ▓▓▓                          
+         ▓▓▓▓▓                     ▓▓    
+     ▓▓▓▓▓   ▓               ▓     ▓▓▓   
+    ▓▓       ▓           ▓▓ ▓▓▓     ▓ ▓▓ 
+   ▓▓        ▓            ▓▓▓ ▓   ▓▓▓   ▓
+   ▓▓  ▓▓    ▓    ▓▓▓▓▓▓   ▓  ▓▓ ▓▓ ▓▓▓▓ 
+     ▓▓      ▓   ▓▓   ▓▓▓  ▓   ▓▓▓   ▓   
+             ▓   ▓    ▓ ▓ ▓  by @pryaaansu  
+             ▓   ▓   ▓▓  ▓               
+            ▓▓   ▓▓▓▓▓                   
+          ▓▓▓                            
+        ▓▓▓                                                
+            
+┌────────────────────────────────────────────┐
+│        WELCOME TO MY PORTFOLIO :D          │
+└────────────────────────────────────────────┘
+
+  PRIYANSHU PRAMANIK ^_^
+  ► Security Researcher
+  burp, terminal, skills thats all i have :))
+
+Type 'help' to see available commands.
+
+════════════════════════════════════════════════`;
+
+//    Hire me before I start pentesting your fridge and demanding coffee as ransom.
+
+            
+            const div = document.createElement('div');
+            div.className = 'output';
+            div.innerHTML = welcomeMessage;
+            output.appendChild(div);
+        }
+
+        function processCommand(cmd) {
+            const trimmedCmd = cmd.trim().toLowerCase();
+            
+            const cmdDiv = document.createElement('div');
+            cmdDiv.className = 'output';
+            cmdDiv.textContent = `kali@pryaaansu:~$ ${cmd}`;
+            output.appendChild(cmdDiv);
+            
+            if (trimmedCmd === '') return;
+            
+            if (commands[trimmedCmd]) {
+                if (commands[trimmedCmd].action) {
+                    commands[trimmedCmd].action();
+                } else {
+                    const outputDiv = document.createElement('div');
+                    outputDiv.className = 'output';
+                    outputDiv.innerHTML = commands[trimmedCmd].output;
+                    output.appendChild(outputDiv);
+                }
+            } else {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'output glitch';
+                errorDiv.innerHTML = `
+╔════════════════════════════════════════════╗
+║  ERROR: COMMAND NOT FOUND: ${cmd.toUpperCase().padEnd(15)} ║
+║  TYPE 'help' TO SEE AVAILABLE COMMANDS     ║
+╚════════════════════════════════════════════╝`;
+                output.appendChild(errorDiv);
+            }
+            
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        commandInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = commandInput.value;
+                processCommand(cmd);
+                commandInput.value = '';
+                updateCursorPosition();
+            }
+        });
+        
+        commandInput.addEventListener('input', updateCursorPosition);
+        commandInput.addEventListener('keydown', updateCursorPosition);
+        commandInput.addEventListener('keyup', updateCursorPosition);
+
+        document.addEventListener('click', () => {
+            commandInput.focus();
+            updateCursorPosition();
+        });
+
+        window.addEventListener('load', () => {
+            showWelcomeMessage();
+            commandInput.focus();
+            updateCursorPosition();
+        });
+
+        setInterval(() => {
+            if (Math.random() > 0.98) {
+                document.querySelector('.terminal').classList.add('glitch');
+                setTimeout(() => {
+                    document.querySelector('.terminal').classList.remove('glitch');
+                }, 100);
+            }
+        }, 2000);
+
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                const screen = document.querySelector('.screen');
+                screen.style.filter = 'contrast(1.2) brightness(1.1)';
+                setTimeout(() => {
+                    screen.style.filter = 'none';
+                }, 50);
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
+
